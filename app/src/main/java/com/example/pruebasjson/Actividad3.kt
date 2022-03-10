@@ -7,24 +7,22 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pruebasjson.Model.Circuito_Modelo
 import com.example.pruebasjson.obtenerCircuitos.CircuitosAPI
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONException
 import org.json.JSONObject
-import java.io.IOException
-import java.nio.charset.Charset
 import java.util.concurrent.CyclicBarrier
 
-var jsonTotal=""
-val barrier =  CyclicBarrier(2);
 
-class MainActivity : AppCompatActivity() {
+
+val barrierAc3 =  CyclicBarrier(2);
+
+class Actividad3 : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        getCircuitosCall()
+        getCircuitosCall("drivers.json")
         barrier.await()
         // Instance of users list using the data model class.
         val circuitos: ArrayList<Circuito_Modelo> = ArrayList()
@@ -51,7 +49,7 @@ class MainActivity : AppCompatActivity() {
 
                 // Now add all the variables to the data model class and the data model class to the array list.
                 val userDetails =
-                    Circuito_Modelo(nombre,pais,ciudad,"Aqui foto")
+                    Circuito_Modelo(nombre, pais, ciudad, "Aqui foto")
 
                 circuitos.add(userDetails)
             }
@@ -64,7 +62,7 @@ class MainActivity : AppCompatActivity() {
         // Initialize contacts
 
         // Create adapter passing in the sample user data
-        val adapter = CircuitoAdapter(this,circuitos)
+        val adapter = CircuitoAdapter(this, circuitos)
         // Attach the adapter to the recyclerview to populate items
         rvCircuito.adapter = adapter
         // Set layout manager to position the items
@@ -75,38 +73,19 @@ class MainActivity : AppCompatActivity() {
         //println("-------------------------222")
     }
 
-
-    /**
-     * Method to load the JSON from the Assets file and return the object
-     */
-    private fun getJSONFromAssets(): String? {
-
-        var json: String? = null
-        val charset: Charset = Charsets.UTF_8
-        try {
-            val myUsersJSONFile = assets.open("prueba.json")
-            val size = myUsersJSONFile.available()
-            val buffer = ByteArray(size)
-            myUsersJSONFile.read(buffer)
-            myUsersJSONFile.close()
-            json = String(buffer, charset)
-        } catch (ex: IOException) {
-            ex.printStackTrace()
-            return null
-        }
-        return json
-    }
-    private fun getCircuitosCall() {
-println("Llego aqui")
+    private fun getCircuitosCall(busqueda: String) {
+        println("Llego aqui")
         CoroutineScope(Dispatchers.IO).launch {
-            val listResult = CircuitosAPI.retrofitService.getPhotos("https://ergast.com/api/f1/2010/circuits.json")
-            jsonTotal=listResult
+
+            val listResult = CircuitosAPI.retrofitService.getPhotos("https://ergast.com/api/f1/2010/drivers.json")
+            jsonTotal = listResult
             barrier.await()
 
             println("------")
             print(listResult)
 
         }
+
 
     }
 }
